@@ -1,363 +1,359 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>⚛️ Кабинет физики · 7–11 класс</title>
-
-<style>
-  :root {
-    --primary: #6366f1;
-    --primary-dark: #4f46e5;
-    --card: rgba(255,255,255,0.07);
-    --text: #f1f5f9;
-    --text-dim: #94a3b8;
-    --accent: #22d3ee;
-    --danger: #ef4444;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { height: 100%; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: radial-gradient(ellipse at top, #1e1b4b 0%, #0f172a 60%, #020617 100%);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background-image:
-      radial-gradient(1px 1px at 15% 20%, #fff, transparent),
-      radial-gradient(1px 1px at 65% 75%, #fff, transparent),
-      radial-gradient(2px 2px at 85% 15%, #fff, transparent),
-      radial-gradient(1px 1px at 35% 85%, #fff, transparent),
-      radial-gradient(1.5px 1.5px at 90% 55%, #fff, transparent),
-      radial-gradient(1px 1px at 5% 60%, #fff, transparent);
-    opacity: 0.35;
-    animation: twinkle 6s ease-in-out infinite alternate;
-    pointer-events: none;
-    z-index: 0;
-  }
-  @keyframes twinkle { from { opacity: 0.15; } to { opacity: 0.45; } }
-
-  .app {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 40px 20px 100px;
-    position: relative;
-    z-index: 1;
-  }
-
-  header {
-    text-align: center;
-    margin-bottom: 48px;
-    animation: fadeDown 0.8s cubic-bezier(0.4,0,0.2,1);
-  }
-  @keyframes fadeDown {
-    from { opacity: 0; transform: translateY(-24px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  h1 {
-    font-size: clamp(2rem, 5vw, 3rem);
-    font-weight: 800;
-    letter-spacing: -1px;
-    background: linear-gradient(135deg, #818cf8 0%, #22d3ee 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-  .subtitle {
-    color: var(--text-dim);
-    margin-top: 12px;
-    font-size: 1.05rem;
-  }
-
-  .grades {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-bottom: 40px;
-    animation: fadeIn 0.6s 0.2s backwards;
-  }
-  .grade-btn {
-    padding: 14px 32px;
-    background: var(--card);
-    border: 1px solid rgba(255,255,255,0.1);
-    color: var(--text);
-    border-radius: 14px;
-    cursor: pointer;
-    font-size: 1.05rem;
-    font-weight: 600;
-    transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
-    backdrop-filter: blur(10px);
-    font-family: inherit;
-  }
-  .grade-btn:hover {
-    transform: translateY(-3px);
-    border-color: var(--primary);
-    box-shadow: 0 10px 30px rgba(99,102,241,0.25);
-  }
-  .grade-btn.active {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    border-color: transparent;
-    box-shadow: 0 8px 25px rgba(99,102,241,0.55);
-    transform: translateY(-2px);
-  }
-
-  .section { animation: fadeIn 0.5s ease; }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-  .section-title { font-size: 1.4rem; font-weight: 700; }
-  .section-title span { color: var(--accent); }
-  .section-title small {
-    color: var(--text-dim);
-    font-weight: 400;
-    font-size: 0.9rem;
-    margin-left: 6px;
-  }
-
-  .upload-btn {
-    padding: 12px 24px;
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    border: none;
-    color: white;
-    border-radius: 12px;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: 600;
-    transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
-    box-shadow: 0 4px 15px rgba(99,102,241,0.4);
-    font-family: inherit;
-  }
-  .upload-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(99,102,241,0.6);
-  }
-  .upload-btn:active { transform: translateY(0); }
-
-  .files {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-    gap: 16px;
-  }
-  .file-card {
-    background: var(--card);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 16px;
-    padding: 20px;
-    backdrop-filter: blur(10px);
-    transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
-    animation: cardIn 0.4s cubic-bezier(0.4,0,0.2,1) backwards;
-  }
-  @keyframes cardIn {
-    from { opacity: 0; transform: scale(0.92) translateY(12px); }
-    to   { opacity: 1; transform: scale(1) translateY(0); }
-  }
-  .file-card:hover {
-    transform: translateY(-4px);
-    border-color: var(--primary);
-    box-shadow: 0 12px 30px rgba(99,102,241,0.25);
-  }
-  .file-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    margin-bottom: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-  }
-  .file-name {
-    font-weight: 600;
-    word-break: break-word;
-    margin-bottom: 6px;
-    font-size: 0.95rem;
-    line-height: 1.35;
-  }
-  .file-meta {
-    font-size: 0.8rem;
-    color: var(--text-dim);
-    margin-bottom: 14px;
-  }
-  .file-actions { display: flex; gap: 8px; }
-  .btn-sm {
-    flex: 1;
-    padding: 8px 12px;
-    border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.15);
-    background: rgba(255,255,255,0.05);
-    color: var(--text);
-    cursor: pointer;
-    font-size: 0.85rem;
-    font-weight: 500;
-    transition: all 0.2s;
-    font-family: inherit;
-  }
-  .btn-sm:hover {
-    background: rgba(255,255,255,0.15);
-    border-color: var(--primary);
-    transform: translateY(-1px);
-  }
-  .btn-sm.danger:hover {
-    background: rgba(239,68,68,0.2);
-    border-color: var(--danger);
-    color: #fca5a5;
-  }
-
-  .empty {
-    text-align: center;
-    padding: 80px 20px;
-    color: var(--text-dim);
-    animation: fadeIn 0.6s 0.2s backwards;
-  }
-  .empty-icon {
-    font-size: 64px;
-    margin-bottom: 16px;
-    opacity: 0.5;
-    animation: float 3s ease-in-out infinite;
-  }
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50%      { transform: translateY(-10px); }
-  }
-
-  .modal-overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.75);
-    backdrop-filter: blur(8px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    z-index: 100;
-    animation: fadeIn 0.3s;
-  }
-  .modal {
-    background: linear-gradient(135deg, #1e293b, #0f172a);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 20px;
-    padding: 32px;
-    max-width: 500px;
-    width: 100%;
-    animation: modalIn 0.4s cubic-bezier(0.4,0,0.2,1);
-  }
-  @keyframes modalIn {
-    from { opacity: 0; transform: scale(0.9) translateY(20px); }
-    to   { opacity: 1; transform: scale(1) translateY(0); }
-  }
-  .modal h2 { margin-bottom: 8px; font-size: 1.5rem; }
-  .modal > p { color: var(--text-dim); margin-bottom: 24px; }
-  .dropzone {
-    border: 2px dashed rgba(255,255,255,0.2);
-    border-radius: 16px;
-    padding: 40px 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s;
-    margin-bottom: 16px;
-  }
-  .dropzone:hover, .dropzone.drag {
-    border-color: var(--primary);
-    background: rgba(99,102,241,0.1);
-    transform: scale(1.01);
-  }
-  .dropzone-icon { font-size: 48px; margin-bottom: 12px; }
-  .dropzone small {
-    color: var(--text-dim);
-    display: block;
-    margin-top: 8px;
-    font-size: 0.85rem;
-  }
-  #selectedList {
-    margin-bottom: 16px;
-    font-size: 0.9rem;
-    color: var(--accent);
-    min-height: 20px;
-  }
-  .modal-actions {
-    display: flex;
-    gap: 12px;
-    justify-content: flex-end;
-  }
-  .btn {
-    padding: 10px 22px;
-    border-radius: 10px;
-    border: 1px solid rgba(255,255,255,0.15);
-    background: rgba(255,255,255,0.05);
-    color: var(--text);
-    cursor: pointer;
-    font-size: 0.95rem;
-    font-weight: 500;
-    transition: all 0.2s;
-    font-family: inherit;
-  }
-  .btn:hover { background: rgba(255,255,255,0.1); }
-  .btn.primary {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    border-color: transparent;
-  }
-  .btn.primary:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 15px rgba(99,102,241,0.5);
-  }
-  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-  .toast {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%) translateY(120px);
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    color: white;
-    padding: 14px 28px;
-    border-radius: 12px;
-    font-weight: 600;
-    box-shadow: 0 10px 30px rgba(99,102,241,0.5);
-    transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
-    z-index: 200;
-    font-size: 0.95rem;
-  }
-  .toast.show { transform: translateX(-50%) translateY(0); }
-  .toast.error { background: linear-gradient(135deg, #ef4444, #dc2626); }
-
-  @media (max-width: 600px) {
-    .grades { gap: 8px; }
-    .grade-btn { padding: 10px 20px; font-size: 0.9rem; }
-    .app { padding: 20px 16px 100px; }
-    .modal { padding: 24px; }
-  }
-</style>
-</head>
-<body>
-
-<div class="app">
-  <header>
-    <h1>⚛️ Кабинет физики</h1>
-    <p class="subtitle">База материалов для учителя · 7–11 класс</p>
-  </header>
-
-  <div class="grades" id="grades"></div>
-  <div id="content"></div>
-</div>
-
-<script>
 /* ============================================================
-   БАЗА ДАННЫХ (IndexedDB)
+   ⚛️ КАБИНЕТ ФИЗИКИ — учительский сайт
+   Один файл, один язык: JavaScript.
+   Хранилище: IndexedDB (работает без сервера).
    ============================================================ */
+
+// ============================================================
+// 1. СТИЛИ (генерируются из JS)
+// ============================================================
+const CSS = `
+:root {
+  --primary: #6366f1;
+  --primary-dark: #4f46e5;
+  --card: rgba(255,255,255,0.07);
+  --text: #f1f5f9;
+  --text-dim: #94a3b8;
+  --accent: #22d3ee;
+  --danger: #ef4444;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: radial-gradient(ellipse at top, #1e1b4b 0%, #0f172a 60%, #020617 100%);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 15% 20%, #fff, transparent),
+    radial-gradient(1px 1px at 65% 75%, #fff, transparent),
+    radial-gradient(2px 2px at 85% 15%, #fff, transparent),
+    radial-gradient(1px 1px at 35% 85%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 90% 55%, #fff, transparent),
+    radial-gradient(1px 1px at 5% 60%, #fff, transparent);
+  opacity: 0.35;
+  animation: twinkle 6s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: 0;
+}
+@keyframes twinkle { from { opacity: 0.15; } to { opacity: 0.45; } }
+
+.app {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px 100px;
+  position: relative;
+  z-index: 1;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 48px;
+  animation: fadeDown 0.8s cubic-bezier(0.4,0,0.2,1);
+}
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -1px;
+  background: linear-gradient(135deg, #818cf8 0%, #22d3ee 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.subtitle {
+  color: var(--text-dim);
+  margin-top: 12px;
+  font-size: 1.05rem;
+}
+
+.grades {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+  animation: fadeIn 0.6s 0.2s backwards;
+}
+.grade-btn {
+  padding: 14px 32px;
+  background: var(--card);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text);
+  border-radius: 14px;
+  cursor: pointer;
+  font-size: 1.05rem;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  backdrop-filter: blur(10px);
+  font-family: inherit;
+}
+.grade-btn:hover {
+  transform: translateY(-3px);
+  border-color: var(--primary);
+  box-shadow: 0 10px 30px rgba(99,102,241,0.25);
+}
+.grade-btn.active {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  border-color: transparent;
+  box-shadow: 0 8px 25px rgba(99,102,241,0.55);
+  transform: translateY(-2px);
+}
+
+.section { animation: fadeIn 0.5s ease; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.section-title { font-size: 1.4rem; font-weight: 700; }
+.section-title span { color: var(--accent); }
+.section-title small {
+  color: var(--text-dim);
+  font-weight: 400;
+  font-size: 0.9rem;
+  margin-left: 6px;
+}
+
+.upload-btn {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  border: none;
+  color: white;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: 0 4px 15px rgba(99,102,241,0.4);
+  font-family: inherit;
+}
+.upload-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(99,102,241,0.6);
+}
+.upload-btn:active { transform: translateY(0); }
+
+.files {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 16px;
+}
+.file-card {
+  background: var(--card);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  animation: cardIn 0.4s cubic-bezier(0.4,0,0.2,1) backwards;
+}
+@keyframes cardIn {
+  from { opacity: 0; transform: scale(0.92) translateY(12px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.file-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--primary);
+  box-shadow: 0 12px 30px rgba(99,102,241,0.25);
+}
+.file-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+.file-name {
+  font-weight: 600;
+  word-break: break-word;
+  margin-bottom: 6px;
+  font-size: 0.95rem;
+  line-height: 1.35;
+}
+.file-meta {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin-bottom: 14px;
+}
+.file-actions { display: flex; gap: 8px; }
+.btn-sm {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.05);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.btn-sm:hover {
+  background: rgba(255,255,255,0.15);
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+.btn-sm.danger:hover {
+  background: rgba(239,68,68,0.2);
+  border-color: var(--danger);
+  color: #fca5a5;
+}
+
+.empty {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--text-dim);
+  animation: fadeIn 0.6s 0.2s backwards;
+}
+.empty-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+  animation: float 3s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 100;
+  animation: fadeIn 0.3s;
+}
+.modal {
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  padding: 32px;
+  max-width: 500px;
+  width: 100%;
+  animation: modalIn 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.9) translateY(20px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.modal h2 { margin-bottom: 8px; font-size: 1.5rem; }
+.modal > p { color: var(--text-dim); margin-bottom: 24px; }
+.dropzone {
+  border: 2px dashed rgba(255,255,255,0.2);
+  border-radius: 16px;
+  padding: 40px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-bottom: 16px;
+}
+.dropzone:hover, .dropzone.drag {
+  border-color: var(--primary);
+  background: rgba(99,102,241,0.1);
+  transform: scale(1.01);
+}
+.dropzone-icon { font-size: 48px; margin-bottom: 12px; }
+.dropzone small {
+  color: var(--text-dim);
+  display: block;
+  margin-top: 8px;
+  font-size: 0.85rem;
+}
+#selectedList {
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+  color: var(--accent);
+  min-height: 20px;
+}
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+.btn {
+  padding: 10px 22px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.05);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.btn:hover { background: rgba(255,255,255,0.1); }
+.btn.primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  border-color: transparent;
+}
+.btn.primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(99,102,241,0.5);
+}
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(120px);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  padding: 14px 28px;
+  border-radius: 12px;
+  font-weight: 600;
+  box-shadow: 0 10px 30px rgba(99,102,241,0.5);
+  transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+  z-index: 200;
+  font-size: 0.95rem;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.error { background: linear-gradient(135deg, #ef4444, #dc2626); }
+
+@media (max-width: 600px) {
+  .grades { gap: 8px; }
+  .grade-btn { padding: 10px 20px; font-size: 0.9rem; }
+  .app { padding: 20px 16px 100px; }
+  .modal { padding: 24px; }
+}
+`;
+
+// ============================================================
+// 2. ВСТАВКА СТИЛЕЙ В ДОКУМЕНТ
+// ============================================================
+const styleEl = document.createElement('style');
+styleEl.textContent = CSS;
+document.head.appendChild(styleEl);
+
+// ============================================================
+// 3. БАЗА ДАННЫХ
+// ============================================================
 let db = null;
 
 function openDB() {
@@ -437,9 +433,9 @@ async function deleteFile(id) {
   });
 }
 
-/* ============================================================
-   УТИЛИТЫ
-   ============================================================ */
+// ============================================================
+// 4. УТИЛИТЫ
+// ============================================================
 function fileIcon(f) {
   const ext = (f.name.split('.').pop() || '').toLowerCase();
   const map = {
@@ -503,9 +499,26 @@ function toast(msg, isError = false) {
   }, 2500);
 }
 
-/* ============================================================
-   КЛАССЫ
-   ============================================================ */
+// ============================================================
+// 5. ПОСТРОЕНИЕ СТРАНИЦЫ (всё из JS)
+// ============================================================
+document.body.innerHTML = '';
+
+const app = document.createElement('div');
+app.className = 'app';
+app.innerHTML = `
+  <header>
+    <h1>⚛️ Кабинет физики</h1>
+    <p class="subtitle">База материалов для учителя · 7–11 класс</p>
+  </header>
+  <div class="grades" id="grades"></div>
+  <div id="content"></div>
+`;
+document.body.appendChild(app);
+
+// ============================================================
+// 6. КЛАССЫ
+// ============================================================
 const GRADES = [7, 8, 9, 10, 11];
 let currentGrade = 7;
 
@@ -519,9 +532,9 @@ GRADES.forEach((g) => {
   gradesEl.appendChild(btn);
 });
 
-/* ============================================================
-   РЕНДЕР
-   ============================================================ */
+// ============================================================
+// 7. РЕНДЕР ФАЙЛОВ
+// ============================================================
 function renderFiles(files) {
   const content = document.getElementById('content');
 
@@ -584,9 +597,9 @@ function renderFiles(files) {
   document.getElementById('uploadBtn').onclick = openUploadModal;
 }
 
-/* ============================================================
-   ДЕЙСТВИЯ С ФАЙЛАМИ
-   ============================================================ */
+// ============================================================
+// 8. ДЕЙСТВИЯ С ФАЙЛАМИ
+// ============================================================
 async function openFile(id) {
   const f = await getFile(id);
   if (!f) return;
@@ -615,9 +628,9 @@ async function confirmDelete(id) {
   loadGrade(currentGrade);
 }
 
-/* ============================================================
-   МОДАЛКА ЗАГРУЗКИ
-   ============================================================ */
+// ============================================================
+// 9. МОДАЛКА ЗАГРУЗКИ
+// ============================================================
 function openUploadModal() {
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
@@ -694,9 +707,9 @@ function openUploadModal() {
   };
 }
 
-/* ============================================================
-   ПЕРЕКЛЮЧЕНИЕ КЛАССА
-   ============================================================ */
+// ============================================================
+// 10. ПЕРЕКЛЮЧЕНИЕ КЛАССА
+// ============================================================
 async function switchGrade(grade) {
   currentGrade = grade;
   document.querySelectorAll('.grade-btn').forEach((b) => {
@@ -710,9 +723,9 @@ async function loadGrade(grade) {
   renderFiles(files);
 }
 
-/* ============================================================
-   СТАРТ
-   ============================================================ */
+// ============================================================
+// 11. СТАРТ
+// ============================================================
 (async function init() {
   try {
     await openDB();
@@ -725,7 +738,3 @@ async function loadGrade(grade) {
     toast('Не удалось открыть базу данных', true);
   }
 })();
-</script>
-
-</body>
-</html>
